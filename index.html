@@ -686,10 +686,6 @@
         <div class="gallery-caption">T-Bar Ceiling Grid System</div>
       </div>
       <div class="gallery-item fade-up">
-        <img src="assets/ceiling.jpg" alt="Commercial ceiling finishing" loading="lazy" />
-        <div class="gallery-caption">Commercial Ceiling &amp; Interior Finishing</div>
-      </div>
-      <div class="gallery-item fade-up">
         <img src="assets/drywall.jpg" alt="Drywall installation in corridor" loading="lazy" />
         <div class="gallery-caption">Drywall Installation &amp; Taping</div>
       </div>
@@ -739,7 +735,7 @@
           </div>
         </div>
       </div>
-      <form class="quote-form fade-up" id="quoteForm" onsubmit="handleSubmit(event)">
+      <form class="quote-form fade-up" id="quoteForm" action="https://formspree.io/f/xnjbyrbz" method="POST" onsubmit="handleSubmit(event)">
         <h3>Request a Quote</h3>
         <div class="form-row">
           <div class="form-group">
@@ -860,16 +856,36 @@
     const btn = form.querySelector('button[type="submit"]');
     const originalHTML = btn.innerHTML;
 
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Request Sent!`;
-    btn.style.background = '#27ae60';
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.8s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="12"/></svg> Sending...`;
     btn.disabled = true;
 
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.style.background = '';
-      btn.disabled = false;
-      form.reset();
-    }, 3000);
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if (response.ok) {
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Request Sent!`;
+        btn.style.background = '#27ae60';
+        form.reset();
+      } else {
+        btn.innerHTML = `Error — please try again`;
+        btn.style.background = '#e74c3c';
+      }
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    }).catch(() => {
+      btn.innerHTML = `Error — please try again`;
+      btn.style.background = '#e74c3c';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    });
   }
 </script>
 
